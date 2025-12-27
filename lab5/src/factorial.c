@@ -23,7 +23,6 @@ void* worker(void* arg) {
     
     // Каждый поток берет следующее число для обработки
     while (1) {
-        // Атомарно увеличиваем current и получаем предыдущее значение
         num = __atomic_fetch_add(data->current, 1, __ATOMIC_RELAXED);
         
         if (num > data->k) {
