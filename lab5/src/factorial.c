@@ -44,7 +44,7 @@ void* worker(void* arg) {
 
 // Функция для вычисления факториала
 long long calculate_factorial(long long k, int pnum, long long mod) {
-    long long current = 1;  // Начинаем с 1 (факториал начинается с 1)
+    long long current = 1;
     long long result = 1;
     pthread_t* threads = NULL;
     ThreadData* thread_data = NULL;
@@ -102,7 +102,6 @@ long long calculate_factorial(long long k, int pnum, long long mod) {
     return result;
 }
 
-// Функция для вывода справки
 void print_usage(const char* program_name) {
     printf("Использование: %s -k <число> --pnum=<количество_потоков> --mod=<модуль>\n", program_name);
     printf("Пример: %s -k 10 --pnum=4 --mod=10\n", program_name);
@@ -147,11 +146,6 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     
-    // Специальный случай: если mod = 1, результат всегда 0
-    if (mod == 1) {
-        printf("%lld! mod %lld = 0\n", k, mod);
-        return 0;
-    }
     
     // Если потоков больше чем чисел для обработки
     if (pnum > k) {
