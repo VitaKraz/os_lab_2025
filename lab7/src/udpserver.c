@@ -8,14 +8,19 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#define SERV_PORT 20001
-#define BUFSIZE 1024
 #define SADDR struct sockaddr
-#define SLEN sizeof(struct sockaddr_in)
 
-int main() {
+int main(int argc, char *argv[]) {
+  if (argc != 3) {
+    printf("Usage: %s <PORT> <BUFSIZE>\n", argv[0]);
+    exit(1);
+  }
+
+  int port = atoi(argv[1]);
+  int bufsize = atoi(argv[2]);
+  
   int sockfd, n;
-  char mesg[BUFSIZE], ipadr[16];
+  char mesg[bufsize], ipadr[16];
   struct sockaddr_in servaddr;
   struct sockaddr_in cliaddr;
 
@@ -24,21 +29,22 @@ int main() {
     exit(1);
   }
 
-  memset(&servaddr, 0, SLEN);
+  memset(&servaddr, 0, sizeof(servaddr));
   servaddr.sin_family = AF_INET;
   servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-  servaddr.sin_port = htons(SERV_PORT);
+  servaddr.sin_port = htons(port);
 
-  if (bind(sockfd, (SADDR *)&servaddr, SLEN) < 0) {
+  if (bind(sockfd, (SADDR *)&servaddr, sizeof(servaddr)) < 0) {
     perror("bind problem");
     exit(1);
   }
-  printf("SERVER starts...\n");
+  
+  printf("UDP Server starts on port %d...\n", port);
 
   while (1) {
-    unsigned int len = SLEN;
+    unsigned int len = sizeof(cliaddr);
 
-    if ((n = recvfrom(sockfd, mesg, BUFSIZE, 0, (SADDR *)&cliaddr, &len)) < 0) {
+    if ((n = recvfrom(sockfd, mesg, bufsize, 0, (SADDR *)&cliaddr, &len)) < 0) {
       perror("recvfrom");
       exit(1);
     }
